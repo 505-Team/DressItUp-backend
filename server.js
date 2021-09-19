@@ -65,7 +65,7 @@ class Art {
     }
 }
 
-
+let FavoriteModel;
 //MALAK'S WORK
 let PaintingModel;
 main().catch(err => console.log(err));
@@ -85,7 +85,19 @@ async function main() {
 
   });
 
+  const favoritePaintingSchema = new mongoose.Schema({
+    id: String,
+    title: String,
+    image_url:String,
+    provenance_text: String,
+    place_of_origin: String,
+    date_display: String,
+    artist_display: String,
+    email: String
+  });
+
   PaintingModel = mongoose.model('Paintin', paintingSchema);
+  FavoriteModel = mongoose.model('FavoritePainting', favoritePaintingSchema);
   //call one time then commit it to drevent rebited
   // seedData();
 }
@@ -128,7 +140,7 @@ async function main() {
 
 //Routes
 
-// server.get('/getPainting', getPaintingHandler);
+server.get('/getPainting', getPaintingHandler);
 server.post('/addPainting', addPaintingHandler);
 server.delete('/deletePainting/:id', deletePaintingHandler);
 server.put('/updatePainting/:id',updatePaintingHandler);
@@ -212,6 +224,38 @@ function updatePaintingHandler(req,res){
   })
 
 }
+
+//Musaab's work
+server.post('/addFavoritePainting', addFavoritePainting);
+
+
+
+async function addFavoritePainting(request,response){
+  const { id,title,image_url, provenance_text, place_of_origin, date_display,artist_display,email } = request.body;
+
+  await FavoriteModel.create({
+    id: id,
+    title:title,
+    image_url:image_url,
+    provenance_text: provenance_text,
+    place_of_origin: place_of_origin,
+    date_display: date_display,
+    artist_display: artist_display,
+    email: email
+  });
+
+  // FavoriteModel.find({ email: email }, (err, result) => {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   else {
+  //     console.log(result.data);
+  //     response.send(result);
+  //   }
+  // })
+  
+}
+
 
 server.get('*', (req, res) => {
     res.status(500).send('Sory , Page Not found');
