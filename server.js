@@ -1,24 +1,72 @@
 'use strict';
-
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const server = express();
+const cors = require('cors');
 server.use(cors());
-//access req.body
-server.use(express.json());
-const PORT = process.env.PORT ;
-//MongoDB
+const axios = require ('axios');
 const mongoose = require('mongoose');
 
-server.get('/test', (request, response) => {
 
-  response.send('test request received')
+// to access req.body
+server.use(express.json());
 
-})
+const PORT = process.env.PORT;
 
 
- 
+
+// http://localhost:3030/
+server.get('/', (req, res) => {
+    res.send('Hello, welcome at Home page');
+});
+
+// http://localhost:3030/art
+server.get('/art', artFunction);
+
+function artFunction(req, res) {
+
+    let pageNumber = req.query.pageNumber;
+
+    const requestUrl = `https://api.artic.edu/api/v1/artworks?page=${pageNumber}`;
+    // console.log(pageNumber);
+    
+
+    axios
+        .get(requestUrl)
+        .then(result => {
+            const arrayOfArts = result.data.data.map(artObject => {
+                return new Art(artObject);
+                //  console.log(arrayOfArts);
+            })
+            res.send(arrayOfArts);
+            console.log(arrayOfArts);
+
+        })
+        .catch(err => {
+            res.status(404).send('the page not found');
+        })
+};
+
+
+
+
+class Art {
+    constructor(item) {
+        this.id = item.id;
+        this.title = item.title;
+        this.date_display = item.date_display;
+        this.artist_display = item.artist_display;
+        this.image_url = `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`;
+        this.provenance_text=item.provenance_text;
+        this.place_of_origin= item.place_of_origin;
+        this.medium_display=item.medium_display;
+        this.fiscal_year=item.fiscal_year;
+        this.colorfulness=item.colorfulness;
+    }
+}
+
+
+//MALAK'S WORK
 let PaintingModel;
 main().catch(err => console.log(err));
 
@@ -168,8 +216,10 @@ function updatePaintingHandler(req,res){
 
 }
 
+server.get('*', (req, res) => {
+    res.status(500).send('Sory , Page Not found');
+});
 
-
-
-
-server.listen(PORT, () => console.log(`listening on ${PORT}`))
+server.listen(PORT, () => {
+    console.log(`im listening on ${PORT}`);
+});
