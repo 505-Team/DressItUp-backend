@@ -80,6 +80,7 @@ async function main() {
     painter:String,
     description: String,
     status: String,
+    artistDisplay: String,
     ownerEmail: String
 
 
@@ -128,7 +129,7 @@ async function main() {
 
 //Routes
 
-// server.get('/getPainting', getPaintingHandler);
+server.get('/getPainting', getPaintingHandler);
 server.post('/addPainting', addPaintingHandler);
 server.delete('/deletePainting/:id', deletePaintingHandler);
 server.put('/updatePainting/:id',updatePaintingHandler);
@@ -153,12 +154,13 @@ function getPaintingHandler(req, res) {
 
 async function addPaintingHandler(req, res) {
   console.log(req.body);
-  const { title,imgUrl,painter, description, status, ownerEmail } = req.body;
+  const { title,imgUrl,painter, description,artistDisplay, status, ownerEmail } = req.body;
   await PaintingModel.create({
     title: title,
     imgUrl:imgUrl,
     painter:painter,
     description: description,
+    artistDisplay:artistDisplay,
     status: status,
     ownerEmail: ownerEmail
   });
@@ -197,8 +199,8 @@ function deletePaintingHandler(req, res) {
 
 function updatePaintingHandler(req,res){
   const id=req.params.id;
-  const {title,imgUrl,painter,description,email,status}= req.body;
-  PaintingModel.findByIdAndUpdate(id,{title,imgUrl,painter,description,status},(err,result)=>{
+  const {title,imgUrl,painter,description,artistDisplay,email,status}= req.body;
+  PaintingModel.findByIdAndUpdate(id,{title,imgUrl,painter,description,artistDisplay,status},(err,result)=>{
     PaintingModel.find({ownerEmail:email},(err,result)=>{
       if(err)
       {
