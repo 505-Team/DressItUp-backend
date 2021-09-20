@@ -65,7 +65,7 @@ class Art {
     }
 }
 
-
+let FavoriteModel;
 //MALAK'S WORK
 let PaintingModel;
 main().catch(err => console.log(err));
@@ -80,12 +80,25 @@ async function main() {
     painter:String,
     description: String,
     status: String,
+    artistDisplay: String,
     ownerEmail: String
 
 
   });
 
+  const favoritePaintingSchema = new mongoose.Schema({
+    id: String,
+    title: String,
+    image_url:String,
+    provenance_text: String,
+    place_of_origin: String,
+    date_display: String,
+    artist_display: String,
+    email: String
+  });
+
   PaintingModel = mongoose.model('Paintin', paintingSchema);
+  FavoriteModel = mongoose.model('FavoritePainting', favoritePaintingSchema);
   //call one time then commit it to drevent rebited
   // seedData();
 }
@@ -153,12 +166,13 @@ function getPaintingHandler(req, res) {
 
 async function addPaintingHandler(req, res) {
   console.log(req.body);
-  const { title,imgUrl,painter, description, status, ownerEmail } = req.body;
+  const { title,imgUrl,painter, description,artistDisplay, status, ownerEmail } = req.body;
   await PaintingModel.create({
     title: title,
     imgUrl:imgUrl,
     painter:painter,
     description: description,
+    artistDisplay:artistDisplay,
     status: status,
     ownerEmail: ownerEmail
   });
@@ -197,8 +211,8 @@ function deletePaintingHandler(req, res) {
 
 function updatePaintingHandler(req,res){
   const id=req.params.id;
-  const {title,imgUrl,painter,description,email,status}= req.body;
-  PaintingModel.findByIdAndUpdate(id,{title,imgUrl,painter,description,status},(err,result)=>{
+  const {title,imgUrl,painter,description,artistDisplay,email,status}= req.body;
+  PaintingModel.findByIdAndUpdate(id,{title,imgUrl,painter,description,artistDisplay,status},(err,result)=>{
     PaintingModel.find({ownerEmail:email},(err,result)=>{
       if(err)
       {
@@ -212,6 +226,57 @@ function updatePaintingHandler(req,res){
   })
 
 }
+
+//Musaab's work
+server.post('/addFavoritePainting', addFavoritePainting);
+
+//Esraa's work this work will be after i get data from storepanit
+server.get('/getFavaddFavoritePainting',getFavaddFavoritePainting)
+
+async function addFavoritePainting(request,response){
+  const { id,title,image_url, provenance_text, place_of_origin, date_display,artist_display,email } = request.body;
+
+  await FavoriteModel.create({
+    id: id,
+    title:title,
+    image_url:image_url,
+    provenance_text: provenance_text,
+    place_of_origin: place_of_origin,
+    date_display: date_display,
+    artist_display: artist_display,
+    email: email
+  });
+
+  // FavoriteModel.find({ email: email }, (err, result) => {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   else {
+  //     console.log(result.data);
+  //     response.send(result);
+  //   }
+  // })
+  
+}
+
+
+//Esraa's work 
+//Handlers Functions getFavaddFavoritePainting
+function getFavaddFavoritePainting(req,res){
+  //send favpaints list (email)
+  const email=req.query.email;
+FavoriteModel.find({email:email},(err,result) =>{
+  if(err){
+    console.log(err);
+  }
+  else{
+    res.send(result);
+  }
+})
+}
+
+
+
 
 server.get('*', (req, res) => {
     res.status(500).send('Sory , Page Not found');
