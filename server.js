@@ -230,7 +230,8 @@ function updatePaintingHandler(req,res){
 //Musaab's work
 server.post('/addFavoritePainting', addFavoritePainting);
 
-
+//Esraa's work this work will be after i get data from storepanit
+server.get('/getFavaddFavoritePainting',getFavaddFavoritePainting)
 
 async function addFavoritePainting(request,response){
   const { id,title,image_url, provenance_text, place_of_origin, date_display,artist_display,email } = request.body;
@@ -257,6 +258,24 @@ async function addFavoritePainting(request,response){
   // })
   
 }
+
+
+//Esraa's work 
+//Handlers Functions getFavaddFavoritePainting
+function getFavaddFavoritePainting(req,res){
+  //send favpaints list (email)
+  const email=req.query.email;
+FavoriteModel.find({email:email},(err,result) =>{
+  if(err){
+    console.log(err);
+  }
+  else{
+    res.send(result);
+  }
+})
+}
+
+
 
 
 server.get('*', (req, res) => {
