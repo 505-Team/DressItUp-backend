@@ -64,7 +64,7 @@ class Art {
         this.colorfulness=item.colorfulness;
     }
 }
-
+let RequestedPaintingModel;
 let FavoriteModel;
 //MALAK'S WORK
 let PaintingModel;
@@ -97,6 +97,17 @@ async function main() {
     email: String
   });
 
+  const requestedPaintingSchema = new mongoose.Schema({
+    id: String,
+    title: String,
+    image_url:String,
+    provenance_text: String,
+    place_of_origin: String,
+    date_display: String,
+    artist_display: String,
+    email: String
+  });
+  RequestedPaintingModel = mongoose.model('RequestedPainting', favoritePaintingSchema);
   PaintingModel = mongoose.model('Paintin', paintingSchema);
   FavoriteModel = mongoose.model('FavoritePainting', favoritePaintingSchema);
   //call one time then commit it to drevent rebited
@@ -229,7 +240,7 @@ function updatePaintingHandler(req,res){
 
 //Musaab's work
 server.post('/addFavoritePainting', addFavoritePainting);
-
+server.post('/addRequestedPainting', addRequestedPainting);
 //Esraa's work this work will be after i get data from storepanit
 server.get('/getFavaddFavoritePainting',getFavaddFavoritePainting)
 
@@ -259,6 +270,20 @@ async function addFavoritePainting(request,response){
   
 }
 
+async function addRequestedPainting(request,response){
+  const { id,title,image_url, provenance_text, place_of_origin, date_display,artist_display,email } = request.body;
+
+  await RequestedPaintingModel.create({
+    id: id,
+    title:title,
+    image_url:image_url,
+    provenance_text: provenance_text,
+    place_of_origin: place_of_origin,
+    date_display: date_display,
+    artist_display: artist_display,
+    email: email
+  });
+}
 
 //Esraa's work 
 //Handlers Functions getFavaddFavoritePainting
