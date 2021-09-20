@@ -275,8 +275,20 @@ FavoriteModel.find({email:email},(err,result) =>{
 })
 }
 
+// Amer & Tariq work
+server.get('/getRequestedItems', getRequestItems );
 
-
+function getRequestItems(req,res){
+  const email=req.query.email;
+  RequestedPaintingModel.find({email:email}, (err,result) => {
+    if(err){
+      console.log(err);
+    }
+    else{
+      res.send(result);
+    }
+  })
+}
 
 server.get('*', (req, res) => {
     res.status(500).send('Sory , Page Not found');
