@@ -145,6 +145,7 @@ server.get('/getPainting', getPaintingHandler);
 server.post('/addPainting', addPaintingHandler);
 server.delete('/deletePainting/:id', deletePaintingHandler);
 server.put('/updatePainting/:id',updatePaintingHandler);
+server.delete('/deleteFavItem/:id', deleteFavItemfun);
 
 //Functions Handlers
 
@@ -274,6 +275,27 @@ FavoriteModel.find({email:email},(err,result) =>{
   }
 })
 }
+
+
+function deleteFavItemfun(req, res) {
+  const favId = req.params.id;
+  const email = req.query.email;
+  FavoriteModel.deleteOne({ _id: favId }, (err, result) => {
+
+    FavoriteModel.find({ email: email }, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        res.send(result);
+      }
+    })
+
+  })
+
+
+}
+
 
 
 
