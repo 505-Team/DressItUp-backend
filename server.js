@@ -128,7 +128,7 @@ async function main() {
 
 //Routes
 
-// server.get('/getPainting', getPaintingHandler);
+server.get('/getPainting', getPaintingHandler);
 server.post('/addPainting', addPaintingHandler);
 server.delete('/deletePainting/:id', deletePaintingHandler);
 server.put('/updatePainting/:id',updatePaintingHandler);
